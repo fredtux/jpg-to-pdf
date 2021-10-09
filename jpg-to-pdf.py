@@ -22,6 +22,43 @@ def get_files_list(dir):
 
     return files
 
+def get_pdf(input_directory):
+    # Initialize the PDF object
+    pdf = FPDF(unit="pt", format="A4", orientation="P")
+    pdf.compress = True
+
+    # Iterate through images and add them as PDF pages
+    for file in files:
+        # Rotate image to be able to be put in portrait mode
+        image_path = path.join(input_directory, file)
+        image = Image.open(image_path)
+        width, height = image.size
+
+        if width > height:
+            new_image = image.transpose(Image.ROTATE_270)
+            new_image.save(image_path)
+
+        pdf.add_page()
+        pdf.set_margins(10, 20)
+
+        max_width = 580
+        max_height = 800
+
+        scale = min(max_width / width, max_height / height)
+
+        pdf.image(image_path, 10, 10, width * scale, height * scale)
+
+    return pdf
+
+def compress(input_file):
+    # Get PDFTron key from https://www.pdftron.com/pws/get-key
+    PDFNet.Initialize("Insert your PDFTron key here")
+    doc = PDFDoc(input_file)
+    doc.InitSecurityHandler()
+    Optimizer.Optimize(doc)
+    doc.Save(args.output, SDFDoc.e_linearized)
+    doc.Close()
+
 
 if __name__ == "__main__":
     # Parse arguments
@@ -50,40 +87,10 @@ if __name__ == "__main__":
     # Get files
     files = get_files_list(input_directory)
 
-    # Initialize the PDF object
-    pdf = FPDF(unit="pt", format="A4", orientation="P")
-    pdf.compress = True
-
-    # Iterate through images and add them as PDF pages
-    for file in files:
-        # Rotate image to be able to be put in portrait mode
-        image_path = path.join(input_directory, file)
-        image = Image.open(image_path)
-        width, height = image.size
-
-        if width > height:
-            new_image = image.transpose(Image.ROTATE_270)
-            new_image.save(image_path)
-
-        pdf.add_page()
-        pdf.set_margins(10, 20)
-
-        max_width = 580
-        max_height = 800
-
-        scale = min(max_width / width, max_height / height)
-
-        pdf.image(image_path, 10, 10, width * scale, height * scale)
-
-    # Output
+    # Get PDF and output it
+    pdf = get_pdf(input_directory)
     pdf.output(args.output, "F")
 
     if args.compress:
         # Compress output
-        # Get PDFTron key from https://www.pdftron.com/pws/get-key
-        PDFNet.Initialize("Insert your PDFTron key here")
-        doc = PDFDoc(args.output)
-        doc.InitSecurityHandler()
-        Optimizer.Optimize(doc)
-        doc.Save(args.output, SDFDoc.e_linearized)
-        doc.Close()
+        compress(args.output)
