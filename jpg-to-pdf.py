@@ -22,6 +22,7 @@ def get_files_list(dir):
 
     return files
 
+
 def get_pdf(input_directory):
     # Initialize the PDF object
     pdf = FPDF(unit="pt", format="A4", orientation="P")
@@ -50,6 +51,7 @@ def get_pdf(input_directory):
 
     return pdf
 
+
 def compress(input_file):
     # Get PDFTron key from https://www.pdftron.com/pws/get-key
     PDFNet.Initialize("Insert your PDFTron key here")
@@ -58,6 +60,7 @@ def compress(input_file):
     Optimizer.Optimize(doc)
     doc.Save(args.output, SDFDoc.e_linearized)
     doc.Close()
+
 
 def get_arguments():
     parser = ArgumentParser(description="Convert photos from a directory into a pdf")
@@ -74,12 +77,14 @@ def get_arguments():
 
     return args
 
+
 def unzip(input_directory):
     with ZipFile(args.input, "r") as zip:
         zip.extractall(input_directory)
         print(f"Extracted files to {input_directory}")
 
     return input_directory
+
 
 if __name__ == "__main__":
     # Get arguments
