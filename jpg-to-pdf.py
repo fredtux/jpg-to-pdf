@@ -40,8 +40,8 @@ if __name__ == "__main__":
     # If there is a zip archive as input, then unarchive it and update path
     if args.zip:
         with ZipFile(args.input, "r") as zip:
-            zip.extractall(args.input[:-4])
             input_directory = args.input[:-4]
+            zip.extractall(input_directory)
             print(f"Extracted files to {input_directory}")
 
     else:
