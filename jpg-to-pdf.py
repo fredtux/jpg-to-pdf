@@ -59,9 +59,7 @@ def compress(input_file):
     doc.Save(args.output, SDFDoc.e_linearized)
     doc.Close()
 
-
-if __name__ == "__main__":
-    # Parse arguments
+def get_arguments():
     parser = ArgumentParser(description="Convert photos from a directory into a pdf")
     parser.add_argument("-i", "--input", help="Input directory/zip file (for zip archives use -z parameter)", )
     parser.add_argument("-o", "--output", help="Output file")
@@ -74,13 +72,22 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    return args
+
+def unzip(input_directory):
+    with ZipFile(args.input, "r") as zip:
+        zip.extractall(input_directory)
+        print(f"Extracted files to {input_directory}")
+
+    return input_directory
+
+if __name__ == "__main__":
+    # Get arguments
+    args = get_arguments()
+
     # If there is a zip archive as input, then unarchive it and update path
     if args.zip:
-        with ZipFile(args.input, "r") as zip:
-            input_directory = args.input[:-4]
-            zip.extractall(input_directory)
-            print(f"Extracted files to {input_directory}")
-
+        input_directory = unzip(args.input[:-4])
     else:
         input_directory = args.input
 
