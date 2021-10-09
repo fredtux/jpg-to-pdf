@@ -1,2 +1,2 @@
 #!/bin/bash
-python3 /usr/bin/jpg-to-pdf.py $@
+python3 jpg-to-pdf.py $@
