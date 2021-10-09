@@ -28,6 +28,7 @@ chmod +x jpg-to-pdf
 ```bash
 jpg-to-pdf -h
 ```
+### Getting files from directory and compressing
 ```bash
 jpg-to-pdf -i inputDirectory -o out.pdf -c
 ```
