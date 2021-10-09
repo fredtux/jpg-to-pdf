@@ -1,6 +1,10 @@
 # jpg-to-pdf
 Get all photos in a folder and create a PDF document with them
 
+## Install requirements
+```bash
+pip install -r requirement.txt
+```
 ## Usage (Python)
 ### For help
 ```bash
