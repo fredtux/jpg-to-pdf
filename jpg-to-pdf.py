@@ -3,6 +3,8 @@ from os import walk, path
 from fpdf import FPDF
 from PIL import Image
 from PDFNetPython3 import PDFDoc, Optimizer, SDFDoc, PDFNet
+from zipfile import ZipFile
+
 
 def get_files_list(dir):
     files = []
@@ -20,26 +22,42 @@ def get_files_list(dir):
 
     return files
 
+
 if __name__ == "__main__":
     # Parse arguments
     parser = ArgumentParser(description="Convert photos from a directory into a pdf")
-    parser.add_argument("-i", "--input", help="Input directory",)
+    parser.add_argument("-i", "--input", help="Input directory/zip file (for zip archives use -z parameter)", )
     parser.add_argument("-o", "--output", help="Output file")
-    parser.add_argument("-c", "--compress", help="Compress final PDF using PDFTron (needs a licence key from https://www.pdftron.com/pws/get-key)",action="store_true")
+    parser.add_argument("-c", "--compress",
+                        help="Compress final PDF using PDFTron (needs a licence key from https://www.pdftron.com/pws/get-key)",
+                        action="store_true")
+    parser.add_argument("-z", "--zip",
+                        help="Specifies if the input is a zip archive and unarchives it in the current directory",
+                        action="store_true")
 
     args = parser.parse_args()
 
+    # If there is a zip archive as input, then unarchive it and update path
+    if args.zip:
+        with ZipFile(args.input, "r") as zip:
+            zip.extractall(args.input[:-4])
+            input_directory = args.input[:-4]
+            print(f"Extracted files to {input_directory}")
+
+    else:
+        input_directory = args.input
+
     # Get files
-    files = get_files_list(args.input)
+    files = get_files_list(input_directory)
 
     # Initialize the PDF object
-    pdf = FPDF(unit = "pt", format = "A4", orientation="P")
+    pdf = FPDF(unit="pt", format="A4", orientation="P")
     pdf.compress = True
 
     # Iterate through images and add them as PDF pages
     for file in files:
         # Rotate image to be able to be put in portrait mode
-        image_path = path.join(args.input, file)
+        image_path = path.join(input_directory, file)
         image = Image.open(image_path)
         width, height = image.size
 
@@ -48,7 +66,7 @@ if __name__ == "__main__":
             new_image.save(image_path)
 
         pdf.add_page()
-        pdf.set_margins(10,20)
+        pdf.set_margins(10, 20)
 
         max_width = 580
         max_height = 800
