@@ -3,7 +3,7 @@ Get all photos in a folder and create a PDF document with them
 
 ## Install requirements
 ```bash
-pip install -r requirement.txt
+pip install -r requirements.txt
 ```
 ## Usage (Python)
 ### For help
