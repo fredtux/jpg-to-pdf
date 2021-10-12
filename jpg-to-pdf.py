@@ -42,12 +42,12 @@ def get_pdf(input_directory):
         pdf.add_page()
         pdf.set_margins(10, 20)
 
-        max_width = 580
+        max_width = 575
         max_height = 800
 
         scale = min(max_width / width, max_height / height)
 
-        pdf.image(image_path, 10, 10, width * scale, height * scale)
+        pdf.image(image_path, 10, 10, w=width * scale)
 
     return pdf
 
